@@ -1,90 +1,45 @@
 package porterstemmer
 
 import (
-	//	"log"
 	"unicode"
 )
 
-func isConsonant(s []rune, i int) bool {
-
-	//DEBUG
-	//log.Printf("isConsonant: [%+v]", string(s[i]))
-
-	var result bool
-
-	switch s[i] {
+// consonantAt reports whether r at index i is a consonant, given whether the
+// previous rune was one. 'y' is a consonant at the start or after a vowel.
+func consonantAt(r rune, i int, prevConsonant bool) bool {
+	switch r {
 	case 'a', 'e', 'i', 'o', 'u':
-		result = false
+		return false
 	case 'y':
-		if 0 == i {
-			result = true
-		} else {
-			result = !isConsonant(s, i-1)
-		}
-	default:
-		result = true
+		return i == 0 || !prevConsonant
 	}
-
-	return result
+	return true
 }
 
+func isConsonant(s []rune, i int) bool {
+	// Only a run of 'y's depends on the previous rune; resolve it iteratively.
+	start := i
+	for start > 0 && s[start-1] == 'y' {
+		start--
+	}
+	prev := start > 0 && consonantAt(s[start-1], start-1, false)
+	for j := start; j <= i; j++ {
+		prev = consonantAt(s[j], j, prev)
+	}
+	return prev
+}
+
+// measure returns m in [C](VC){m}[V], i.e. the number of vowel->consonant transitions.
 func measure(s []rune) uint {
-
-	// Initialize.
-	lenS := len(s)
-	result := uint(0)
-	i := 0
-
-	// Short Circuit.
-	if 0 == lenS {
-		/////////// RETURN
-		return result
-	}
-
-	// Ignore (potential) consonant sequence at the beginning of word.
-	for isConsonant(s, i) {
-
-		//DEBUG
-		//log.Printf("[measure([%s])] Eat Consonant [%d] -> [%s]", string(s), i, string(s[i]))
-
-		i++
-		if i >= lenS {
-			/////////////// RETURN
-			return result
+	var result uint
+	prev := true
+	for i, r := range s {
+		c := consonantAt(r, i, prev)
+		if c && !prev {
+			result++
 		}
+		prev = c
 	}
-
-	// For each pair of a vowel sequence followed by a consonant sequence, increment result.
-Outer:
-	for i < lenS {
-
-		for !isConsonant(s, i) {
-
-			//DEBUG
-			//log.Printf("[measure([%s])] VOWEL [%d] -> [%s]", string(s), i, string(s[i]))
-
-			i++
-			if i >= lenS {
-				/////////// BREAK
-				break Outer
-			}
-		}
-		for isConsonant(s, i) {
-
-			//DEBUG
-			//log.Printf("[measure([%s])] CONSONANT [%d] -> [%s]", string(s), i, string(s[i]))
-
-			i++
-			if i >= lenS {
-				result++
-				/////////// BREAK
-				break Outer
-			}
-		}
-		result++
-	}
-
-	// Return
 	return result
 }
 
@@ -115,18 +70,13 @@ func hasSuffix(s, suffix []rune) bool {
 }
 
 func containsVowel(s []rune) bool {
-
-	lenS := len(s)
-
-	for i := 0; i < lenS; i++ {
-
-		if !isConsonant(s, i) {
-			/////////// RETURN
+	prev := true
+	for i, r := range s {
+		prev = consonantAt(r, i, prev)
+		if !prev {
 			return true
 		}
-
 	}
-
 	return false
 }
 

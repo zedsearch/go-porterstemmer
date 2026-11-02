@@ -1,10 +1,10 @@
 # This fork...
 
-I'm maintaining this fork because the original author was not replying to issues or pull requests.  For now I plan on maintaining this fork as necessary.
+I'm maintaining this fork because the original author was not replying to issues or pull requests. For now I plan on maintaining this fork as necessary.
 
 ## Status
 
-[![Tests](https://github.com/blevesearch/go-porterstemmer/workflows/Tests/badge.svg?branch=master&event=push)](https://github.com/blevesearch/go-porterstemmer/actions?query=workflow%3ATests+event%3Apush+branch%3Amaster) [![Lint](https://github.com/blevesearch/go-porterstemmer/workflows/Lint/badge.svg?branch=master&event=push)](https://github.com/blevesearch/go-porterstemmer/actions?query=workflow%3ALint+event%3Apush+branch%3Amaster) [![Coverage Status](https://coveralls.io/repos/github/blevesearch/go-porterstemmer/badge.svg)](https://coveralls.io/github/blevesearch/go-porterstemmer)
+[![Tests](https://github.com/zedsearch/go-porterstemmer/workflows/Tests/badge.svg?branch=master&event=push)](https://github.com/zedsearch/go-porterstemmer/actions?query=workflow%3ATests+event%3Apush+branch%3Amaster) [![Lint](https://github.com/zedsearch/go-porterstemmer/workflows/Lint/badge.svg?branch=master&event=push)](https://github.com/zedsearch/go-porterstemmer/actions?query=workflow%3ALint+event%3Apush+branch%3Amaster) [![Coverage Status](https://coveralls.io/repos/github/zedsearch/go-porterstemmer/badge.svg)](https://coveralls.io/github/zedsearch/go-porterstemmer)
 
 # Go Porter Stemmer
 
@@ -22,17 +22,17 @@ the []rune slice (and sub-slices) at all steps of the algorithm.
 
 For Porter Stemmer algorithm, see:
 
-http://tartarus.org/martin/PorterStemmer/def.txt      (URL #1)
+http://tartarus.org/martin/PorterStemmer/def.txt (URL #1)
 
-http://tartarus.org/martin/PorterStemmer/             (URL #2)
+http://tartarus.org/martin/PorterStemmer/ (URL #2)
 
 # Departures
 
 Also, since when I initially implemented it, it failed the tests at...
 
-http://tartarus.org/martin/PorterStemmer/voc.txt      (URL #3)
+http://tartarus.org/martin/PorterStemmer/voc.txt (URL #3)
 
-http://tartarus.org/martin/PorterStemmer/output.txt   (URL #4)
+http://tartarus.org/martin/PorterStemmer/output.txt (URL #4)
 
 ... after reading the human-readble text over and over again to try to figure out
 what the error I made was (and doing all sorts of things to debug it) I came to the
@@ -43,7 +43,7 @@ This led me to wonder if maybe other people's code that was passing these tests 
 rules that were not in the human-readable description. Which led me to look at the source
 code here...
 
-http://tartarus.org/martin/PorterStemmer/c.txt        (URL #5)
+http://tartarus.org/martin/PorterStemmer/c.txt (URL #5)
 
 ... When I looked there I noticed that there are some items marked as a "DEPARTURE",
 which differ from the original algorithm. (There are 2 of these.)
@@ -55,36 +55,32 @@ I implemented these departures, and the tests at URL #3 and URL #4 all passed.
 To use this Golang library, use with something like:
 
     package main
-    
+
     import (
       "fmt"
-      "github.com/reiver/go-porterstemmer"
+      "github.com/zedsearch/go-porterstemmer"
     )
-    
+
     func main() {
-      
       word := "Waxes"
-      
       stem := porterstemmer.StemString(word)
-      
+
       fmt.Printf("The word [%s] has the stem [%s].\n", word, stem)
     }
 
 Alternatively, if you want to be a bit more efficient, use []rune slices instead, with code like:
 
     package main
-    
+
     import (
       "fmt"
-      "github.com/reiver/go-porterstemmer"
+      "github.com/zedsearch/go-porterstemmer"
     )
-    
+
     func main() {
-      
       word := []rune("Waxes")
-      
       stem := porterstemmer.Stem(word)
-      
+
       fmt.Printf("The word [%s] has the stem [%s].\n", string(word), string(stem))
     }
 
@@ -96,18 +92,16 @@ Also alternatively, if you already know that your word is already lowercase (and
 this library to lowercase your word for you) you can instead use code like:
 
     package main
-    
+
     import (
       "fmt"
-      "github.com/reiver/go-porterstemmer"
+      "github.com/zedsearch/go-porterstemmer"
     )
-    
+
     func main() {
-      
       word := []rune("waxes")
-      
       stem := porterstemmer.StemWithoutLowerCasing(word)
-      
+
       fmt.Printf("The word [%s] has the stem [%s].\n", string(word), string(stem))
     }
 

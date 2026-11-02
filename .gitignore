@@ -7,3 +7,7 @@
 .DS_Store
 /testdata
 **/.idea/
+
+.codg
+.v0
+test
